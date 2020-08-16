@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  python: &python
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB='abwxixqb'
+      - POSTGRES_USER='abwxixqb'
+      - POSTGRES_PASSWORD='llSwm9sBqcog3wc2rEtAOSA8h8Qa6kDU'
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - celery_worker
+  rabbitmq:
+    image: rabbitmq:3.7-alpine
+  celery_worker:
+    <<: *python
+    command: celery -A proje worker --loglevel=info
+    ports: []
+    depends_on:
+      - postgres
+      - rabbitmq
+
