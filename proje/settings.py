@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'equipment',
     'halisaha',
 ]
-CELERY_BROKER_URL ="amqp://rabbitmq"
+CELERY_BROKER_URL ='amqp://rabbitmq'
 SITE_ID = 1
 REST_USE_JWT = True
 
