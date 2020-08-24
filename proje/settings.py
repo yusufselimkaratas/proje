@@ -11,16 +11,30 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+
+env = environ.Env()
+DOCKERIZED = False
+try:
+    os.environ['DOCKERIZED']
+    DOCKERIZED = True
+except:
+    pass
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+
+if not DOCKERIZED:
+    environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'k3euw=c%d0xx)w@p-!2c)st4@q_3@gglc5oz5okl!-(wbp&sqs'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
@@ -48,8 +63,15 @@ INSTALLED_APPS = [
     'equipment',
     'halisaha',
 ]
-CELERY_BROKER_URL ='amqp://rabbitmq'
-SITE_ID = 1
+REDIS = env.cache()
+
+# Celery application definition
+CELERY_BROKER_URL = REDIS["LOCATION"]
+CELERY_RESULT_BACKEND = REDIS["LOCATION"]
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+
 REST_USE_JWT = True
 
 MIDDLEWARE = [
@@ -88,14 +110,7 @@ WSGI_APPLICATION = 'proje.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'frtwfdqj',
-        'USER': 'frtwfdqj',
-        'PASSWORD': 'AdAkMT6fbyk3ARh5_CqNsmhovsIQg_QO',
-        'HOST': 'kandula.db.elephantsql.com',
-        'PORT': '5432',
-    }
+    'default': env.db()
 }
 
 
@@ -135,7 +150,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 REST_FRAMEWORK = {
@@ -143,6 +160,7 @@ REST_FRAMEWORK = {
 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
 )
 }
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

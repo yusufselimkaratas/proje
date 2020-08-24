@@ -1,9 +1,9 @@
 # Create your tasks here
 
-from celery import shared_task
+from proje.celery import app
 
 
 
-@shared_task
-def hello():
+@app.task(bind=True)
+def hello(self):
     print("Hello There!")
