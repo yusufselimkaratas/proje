@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 import environ
+from pytz import timezone
 
 env = environ.Env()
 DOCKERIZED = False
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
     'accounts',
     'equipment',
     'halisaha',
+
 ]
 REDIS = env.cache()
 
@@ -71,6 +73,12 @@ CELERY_RESULT_BACKEND = REDIS["LOCATION"]
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+
+
+
+
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = "America/New_York"
 
 REST_USE_JWT = True
 

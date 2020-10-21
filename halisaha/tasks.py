@@ -1,9 +1,12 @@
 # Create your tasks here
+from django_celery_beat.schedulers import DatabaseScheduler
 
 from proje.celery import app
+from celery import shared_task
 
 
+from time import sleep
 
-@app.task(bind=True)
-def hello(self):
-    print("Hello There!")
+@shared_task
+def send_email(email):
+    print('Sample message is sent to {email}')

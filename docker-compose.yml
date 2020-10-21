@@ -2,7 +2,7 @@ version: '3.3'
 services:
     web:
         build: .
-        image: proje
+        image: webimage
         command: gunicorn -b 0.0.0.0:8000 proje.wsgi -w 4 --timeout 300 -t 80
         restart: unless-stopped
         tty: true
@@ -20,7 +20,7 @@ services:
             timeout: 3s
             retries: 10
     celery:
-        image: proje
+        image: webimage
         command: celery -A proje worker -l info -n worker1@%%h
         restart: unless-stopped
         networks:
@@ -32,7 +32,7 @@ services:
         depends_on:
             - redis
     celerybeat:
-        image: proje
+        image: webimage
         command: celery -A proje beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
         restart: unless-stopped
         networks:
@@ -44,7 +44,7 @@ services:
         depends_on:
             - redis
     migration:
-        image: proje
+        image: webimage
         command: python manage.py migrate
         volumes:
             - .:/usr/src/app/

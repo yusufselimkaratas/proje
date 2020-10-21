@@ -1,0 +1,9 @@
+venv
+.idea
+**/__pycache__
+wslenv
+tmp
+persistence
+celerybeat*
+logs
+.databaseenv
