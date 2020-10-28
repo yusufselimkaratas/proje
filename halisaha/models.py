@@ -4,6 +4,8 @@ from accounts.models import *
 # Create your models here.
 
 
+#DENEME
+
 class Address(models.Model):
 
 
